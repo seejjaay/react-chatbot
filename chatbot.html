@@ -2,6 +2,32 @@
 <html>
   <head>
     <title>Chatbot</title>
+    <style>
+      .send-button {
+        background-color: rgb(57, 134, 89);
+        color: white;
+        padding: 12px 20px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 10px;
+        font-size:15px;
+        cursor: pointer;
+      }
+
+      .class-input{
+        padding: 12px 15px;
+        border-radius: 10px;
+        border-width: 1px;
+        font-size: 15px;
+
+        flex-grow: 1;
+        
+      }
+
+      .chat-input-container{
+        display: flex;
+      }
+    </style>
   </head>
   <body>
     <div class="js-container"></div>
@@ -13,7 +39,7 @@
 
     <script src="https://unpkg.com/supersimpledev/babel.js"></script>
     <script type="text/babel">
-    function ChatInput({chatMessages, setChatMessages}) {
+    function ChatInput({chatMessages, setChatMessages}) { //inputs the data internally
       const [inputText, setInputText] = React.useState('');
 
 
@@ -47,21 +73,24 @@
       }
 
         return (
-            <>
+            <div
+              className="chat-input-container">
               <input 
                 placeholder="Send a message to Chatbot" 
                 size="30" 
                 onChange={saveInputText}
                 value={inputText}
+                className="class-input"
               />
               <button
                 onClick={sendMessage}
+                className="send-button"
               >Send</button>  
-            </>
+            </div>
         );
     }
 
-    function ChatMessage(props){
+    function ChatMessage(props){ //outputs the conversation
       const {message,sender} = props;
       
       return (
@@ -78,7 +107,7 @@
       )
     }
     
-    function ChatMessages({chatMessages}){     
+    function ChatMessages({chatMessages}){ //inputs the data to be outputted
       return (
         <>
           {chatMessages.map((chatMessage)=>{
