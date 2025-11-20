@@ -92,13 +92,30 @@
     <script type="text/babel">
     function ChatInput({chatMessages, setChatMessages}) { //inputs the data internally
       const [inputText, setInputText] = React.useState('');
+      const [isLoading, setIsLoading] = React.useState(false)
 
+      function eventKey(event){
+        if (event.key==='Enter'){
+          sendMessage();
+          setInputText('');
+        }
+        else if (event.key==='Escape'){
+          setInputText('')
+        }
+      }
 
       function saveInputText(event){
         setInputText(event.target.value);
       }
 
-      function sendMessage(){
+      async function sendMessage(){
+
+        if (isLoading || inputText===''){
+          return;
+        }
+
+        setIsLoading(true);
+
         const newChatMessages = [
           ...chatMessages,
           {
@@ -109,8 +126,21 @@
         ]
         
         setChatMessages(newChatMessages);
+        setInputText('')
 
-          const response = Chatbot.getResponse(inputText);
+          let response = null;
+
+          while (response===null){
+            setChatMessages([
+            ...newChatMessages,
+              {
+                message: 'Loading...',
+                sender: 'robot',
+                id: crypto.randomUUID()
+              }
+            ]);
+            response = await Chatbot.getResponseAsync(inputText);
+          }
           setChatMessages([
           ...newChatMessages,
           {
@@ -119,8 +149,9 @@
             id: crypto.randomUUID()
           }
         ]);
-
-          setInputText('');
+          
+        setIsLoading(false);
+         
       }
 
         return (
@@ -132,6 +163,7 @@
                 onChange={saveInputText}
                 value={inputText}
                 className="class-input"
+                onKeyDown={eventKey}
               />
               <button
                 onClick={sendMessage}
